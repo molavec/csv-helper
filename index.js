@@ -1,17 +1,15 @@
 let fs = require('fs')
+let path = require('path')
 let parse = require('csv-parse')
 let stringify = require('csv-stringify')
 let parseArgs = require('minimist')
-
-
-
 
 var argv = parseArgs(process.argv.slice(2));
 //console.log(argv)
 let CHUNCK_SIZE = (argv.s) ? argv.s : 100
 let OUTPUT_DIRECTORY = (argv.o) ? argv.o : 'output'
-let OUTPUT_PREFIX = (argv.p) ? argv.p : 'output'
 let CSV_FILE = (argv._[0] !== undefined)? argv._[0] : undefined
+let OUTPUT_PREFIX = (argv.p) ? argv.p : path.basename(CSV_FILE).substring(0, path.basename(CSV_FILE).indexOf("."))
 
 
 if (CSV_FILE === undefined){
@@ -23,6 +21,7 @@ if (CSV_FILE === undefined){
 if (!fs.existsSync(OUTPUT_DIRECTORY)){
   fs.mkdirSync(OUTPUT_DIRECTORY);
 }
+
 
 let parser = parse({delimiter: ',', columns: true}, function (err, data) {
   //Separa el listado en partes iguales y guarda los "mini-arreglos"
@@ -82,31 +81,4 @@ function csvToFile(objArray, filename){
       console.log(filename + ' saved');
     });
   });
-}
-
-/**
- * Normaliza número de teléfono a un formato que sea útil para ser utlizado
- * en la generación de enlaces de whatsapp.
- *
- * @param {String} phoneOriginal Número original de teléfono.
- */
-function parsePhone(phoneOriginal) {
-  let phone = null;
-  if(phoneOriginal != null) {
-    let phoneString = phoneOriginal.replace(/ |,|\+,(|)/g,'').substr(0,12);
-    if(phoneString.charAt(0) === '+') {
-      phone = phoneString
-    } else if (phoneString.charAt(0) === '0') {
-      phone =  "+56" + phoneString.substr(1,phoneString.length)
-    } else if (phoneString.substr(0,2) === '56') {
-      phone =  "+" + phoneString
-    } else if (phoneString.length === 9 ) {
-      phone =  "+56" + phoneString
-    } else if (phoneString.length === 8 ) {
-      phone = "+569" + phoneString
-    } else {
-      phone = null
-    }
-  }
-  return phone;
 }
