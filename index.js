@@ -7,25 +7,30 @@ let parseArgs = require('minimist')
 
 
 var argv = parseArgs(process.argv.slice(2));
+//console.log(argv)
 let CHUNCK_SIZE = (argv.s) ? argv.s : 100
+let OUTPUT_DIRECTORY = (argv.o) ? argv.o : 'output'
+let OUTPUT_PREFIX = (argv.p) ? argv.p : 'output'
 let CSV_FILE = (argv._[0] !== undefined)? argv._[0] : undefined
-let OUTPUT_PREFIX = (argv._[1]) ? argv._[0] : 'output'
+
 
 if (CSV_FILE === undefined){
   console.log("Debes ingresar un archivo csv")
   return 0
 }
 
-let parser = parse({delimiter: ',', columns: true}, function (err, data) {
+//crea el directorio de salida
+if (!fs.existsSync(OUTPUT_DIRECTORY)){
+  fs.mkdirSync(OUTPUT_DIRECTORY);
+}
 
+let parser = parse({delimiter: ',', columns: true}, function (err, data) {
   //Separa el listado en partes iguales y guarda los "mini-arreglos"
   //en el un gran arreglo "result"
-
   var result = chunkArray(data, CHUNCK_SIZE);
-  console.log(result)
   //Guarda los listados en archivos independientes.
   for(var i=0; i < result.length; i++){
-    csvToFile(result[i], OUTPUT_PREFIX+i+'.csv')
+    csvToFile(result[i], `${OUTPUT_DIRECTORY}/${OUTPUT_PREFIX}${i}.csv`)
   }
 });
 
@@ -58,6 +63,7 @@ function chunkArray(myArray, chunk_size){
  * @param {filename} filename nombre archivo de salida
  */
 function csvToFile(objArray, filename){
+  /*
   let columns = {
     col1: 'col1',
     col2: 'col2',
@@ -66,7 +72,10 @@ function csvToFile(objArray, filename){
     col5: 'col5',
     col6: 'col6'
   };
+
   stringify(objArray, { header: true, columns: columns }, (err, output) => {
+  */
+  stringify(objArray, { header: true}, (err, output) => {
     if (err) throw err;
     fs.writeFile(filename, output, (err) => {
       if (err) throw err;
