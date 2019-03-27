@@ -6,6 +6,7 @@
   "dependencies": {
     "csv-parse": "^4.3.4",
     "csv-stringify": "^5.3.0",
-    "minimist": "^1.2.0"
+    "minimist": "^1.2.0",
+    "split": "^1.0.1"
   }
 }

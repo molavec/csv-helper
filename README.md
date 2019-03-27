@@ -22,5 +22,8 @@ Ejemplo:
 node index.js -s 12 -f "col1,col2,col3" example/example.csv
 debería generar un archivo con solo col1,col2, col3
 
+* Argumentos opcionales
+Hacer que algunos argumentos sean opcionales
+
 
 
